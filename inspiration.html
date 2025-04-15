@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inspiration – WhiteLyon Productions</title>
+  <style>
+    body {
+      background-color: #000;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #111;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .logo-title {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo-title img {
+      height: 50px;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 1rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav ul li a:hover {
+      color: red;
+    }
+
+    .logout {
+      color: red;
+      cursor: pointer;
+      font-size: 0.9rem;
+      text-decoration: underline;
+    }
+
+    main {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .filter-bar button,
+    .upload-label input {
+      padding: 0.5rem 1rem;
+      background-color: #222;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .upload-label {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .inspo-grid {
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    .inspo-card {
+      background-color: #111;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.05);
+    }
+
+    .inspo-card iframe,
+    .inspo-card img {
+      width: 100%;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+    }
+
+    .quote {
+      font-style: italic;
+      color: #ccc;
+    }
+
+    .note-box {
+      margin-top: 3rem;
+    }
+
+    .note-box textarea {
+      width: 100%;
+      height: 120px;
+      background-color: #111;
+      color: white;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 1rem;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    @media (max-width: 768px) {
+      .filter-bar {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+
+      .upload-label {
+        margin-left: 0;
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+<script>
+  const user = localStorage.getItem("loggedInUser");
+  if (!user) window.location.href = "index.html";
+</script>
+
+<header>
+  <div class="logo-title">
+    <img src="assets/logo.png" alt="WhiteLyon Logo" />
+    <h1>WhiteLyon Productions</h1>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="dashboard.html">Home</a></li>
+      <li><a href="schedule.html">Schedule</a></li>
+      <li><a href="projects.html">Projects</a></li>
+      <li><a href="contacts.html">Contacts</a></li>
+      <li><a href="inspiration.html">Inspiration</a></li>
+      <li><a href="finance.html">Finance</a></li>
+      <li><a href="todo.html">To-Do</a></li>
+    </ul>
+  </nav>
+  <div><span class="logout" onclick="logout()">Log Out</span></div>
+</header>
+
+<main>
+  <h2>🎨 Inspiration Library</h2>
+
+  <div class="filter-bar">
+    <button onclick="filterItems('all')">All</button>
+    <button onclick="filterItems('quote')">Quotes</button>
+    <button onclick="filterItems('music')">Music</button>
+    <button onclick="filterItems('visual')">Visual</button>
+    <button onclick="filterItems('bts')">BTS</button>
+    <button onclick="shuffleItem()">🔀 Shuffle</button>
+    <label class="upload-label">
+      Upload
+      <input type="file" onchange="uploadFile(this)" />
+    </label>
+  </div>
+
+  <div class="inspo-grid" id="inspoGrid">
+    <!-- Cards will be injected here -->
+  </div>
+
+  <div class="note-box">
+    <h3>📝 Your Notes</h3>
+    <textarea id="inspoNotes" placeholder="Jot down thoughts, scene ideas, or anything that sparks your mind..."></textarea>
+  </div>
+</main>
+<script>
+  function logout() {
+    localStorage.removeItem("loggedInUser");
+    localStorage.removeItem("rememberedUser");
+    window.location.href = "index.html";
+  }
+
+  const inspirationItems = [
+    {
+      type: "quote",
+      content: `<p class="quote">"The most honest form of filmmaking is to make a film for yourself." <br>– Peter Jackson</p>`
+    },
+    {
+      type: "quote",
+      content: `<p class="quote">"Cinema is a matter of what's in the frame and what's out." <br>– Martin Scorsese</p>`
+    },
+    {
+      type: "music",
+      content: `<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX2TRYkJECvfC" width="100%" height="152" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`
+    },
+    {
+      type: "music",
+      content: `<iframe width="100%" height="200" src="https://www.youtube.com/embed/FL6PbKiz6O4" title="Cinematic Music Mix" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+    },
+    {
+      type: "bts",
+      content: `<iframe width="100%" height="200" src="https://www.youtube.com/embed/q9tOya5nZC0" title="Behind the Scenes - Dune (2021)" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+    },
+    {
+      type: "visual",
+      content: `<img src="assets/moodboard1.jpg" alt="Moodboard Image" />`
+    },
+    {
+      type: "visual",
+      content: `<img src="assets/moodboard2.jpg" alt="Concept Art" />`
+    },
+    {
+      type: "visual",
+      content: `<img src="assets/moodboard3.jpg" alt="Scene Color Reference" />`
+    },
+    {
+      type: "bts",
+      content: `<iframe width="100%" height="200" src="https://www.youtube.com/embed/0NHpYkS2f4I" title="Blade Runner 2049 BTS" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+    }
+  ];
+
+  const grid = document.getElementById("inspoGrid");
+
+  function renderItems(items) {
+    grid.innerHTML = "";
+    items.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "inspo-card";
+      card.setAttribute("data-type", item.type);
+      card.innerHTML = item.content;
+      grid.appendChild(card);
+    });
+  }
+
+  function filterItems(type) {
+    if (type === "all") {
+      renderItems(inspirationItems);
+    } else {
+      const filtered = inspirationItems.filter(item => item.type === type);
+      renderItems(filtered);
+    }
+  }
+
+  function shuffleItem() {
+    const random = inspirationItems[Math.floor(Math.random() * inspirationItems.length)];
+    renderItems([random]);
+  }
+
+  function uploadFile(input) {
+    if (input.files.length) {
+      const file = input.files[0];
+      alert(`📥 File "${file.name}" uploaded (placeholder – not yet saved).`);
+    }
+  }
+
+  // Notes persistence
+  const notes = document.getElementById("inspoNotes");
+  notes.value = localStorage.getItem("inspoNotes") || "";
+
+  notes.addEventListener("input", () => {
+    localStorage.setItem("inspoNotes", notes.value);
+  });
+
+  // Initial load
+  renderItems(inspirationItems);
+</script>
+</body>
+</html>

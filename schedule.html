@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schedule – WhiteLyon Productions</title>
+  <link rel="icon" href="assets/favicon.png">
+
+  <!-- FullCalendar CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #e50914;
+      --bg: #0a0a0a;
+      --card: #111;
+      --text: #fff;
+      --subtext: #bbb;
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    header {
+      background-color: #111;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #222;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.6rem;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+      margin: 0;
+      padding: 0;
+    }
+    nav ul li a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+    nav ul li a:hover {
+      color: var(--accent);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    /* Calendar container with a distinct background */
+    #calendar {
+      background-color: var(--card);
+      border-radius: 8px;
+      padding: 1rem;
+      min-height: 600px;
+      /* This helps ensure the calendar is always visible, even if empty */
+    }
+
+    /* Color-coding events by project */
+    /* We'll handle most coloring in JavaScript (eventDidMount), 
+       but you can define classes or selectors here if desired. */
+
+    /* Modal for Add/Edit, simplified for demonstration */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.8);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal {
+      background-color: #111;
+      padding: 2rem;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 10px;
+      box-shadow: 0 0 25px rgba(255,0,0,0.2);
+      position: relative;
+    }
+    .modal h2 {
+      margin-top: 0;
+    }
+    .modal label {
+      display: block;
+      margin: 0.5rem 0 0.2rem;
+    }
+    .modal input,
+    .modal select,
+    .modal textarea {
+      width: 100%;
+      padding: 0.5rem;
+      background: #222;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+    .modal button {
+      width: 100%;
+      padding: 0.7rem;
+      background-color: var(--accent);
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .modal button:hover {
+      background-color: #cc0000;
+    }
+    .close-btn {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<script>
+  // If user not logged in, redirect
+  if (!localStorage.getItem("loggedInUser")) {
+    window.location.href = "index.html";
+  }
+</script>
+
+<header>
+  <h1>WhiteLyon – Weekly Schedule</h1>
+  <nav>
+    <ul>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="projects.html">Projects</a></li>
+      <li><a href="contacts.html">Contacts</a></li>
+      <li><a href="inspiration.html">Inspiration</a></li>
+      <li><a href="finance.html">Finance</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <!-- We can add an "Add Event" button or top bar if you like -->
+  <button style="
+    background-color: var(--accent);
+    border: none; color: #fff;
+    padding: 0.7rem 1.5rem;
+    border-radius: 5px; margin-bottom: 1rem;
+    font-weight: bold; cursor: pointer;"
+    onclick="openModal()">➕ Add Event
+  </button>
+
+  <!-- Calendar Container -->
+  <div id="calendar"></div>
+</main>
+
+<!-- Add/Edit Modal -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal()">×</button>
+    <h2 id="modalTitle">Add Event</h2>
+    <input type="hidden" id="eventId">
+    <label for="eventTitle">Title</label>
+    <input type="text" id="eventTitle" placeholder="e.g., Meeting with Team" />
+    
+    <label for="eventProject">Project</label>
+    <select id="eventProject">
+      <option value="">Select Project</option>
+      <option value="Manchester Marathon">Manchester Marathon</option>
+      <option value="Billy Whitehouse">Billy Whitehouse</option>
+      <option value="Three Peaks Challenge">Three Peaks Challenge</option>
+    </select>
+    
+    <label for="eventDesc">Description</label>
+    <textarea id="eventDesc" rows="3" placeholder="Short description..."></textarea>
+    
+    <label for="eventStart">Start Time</label>
+    <input type="datetime-local" id="eventStart" />
+    
+    <label for="eventEnd">End Time</label>
+    <input type="datetime-local" id="eventEnd" />
+    
+    <button onclick="saveEvent()">Save</button>
+  </div>
+</div>
+
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+<script>
+  let calendar; // we'll store the FullCalendar instance here
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const calendarEl = document.getElementById('calendar');
+    const storedEvents = JSON.parse(localStorage.getItem("whiteLyonFullEvents") || "[]");
+
+    calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'timeGridWeek',  // weekly layout with times down the side
+      nowIndicator: true,           // shows a line for the current time
+      slotDuration: '00:30:00',     // 30-minute increments
+      allDaySlot: false,            // hide the "all-day" slot at the top
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      events: storedEvents.map(evt => ({
+        id: evt.id,
+        title: evt.title,
+        start: evt.start,
+        end: evt.end,
+        extendedProps: {
+          project: evt.project,
+          description: evt.description
+        }
+      })),
+      // Called after each event is placed in the DOM
+      eventDidMount: function(info) {
+        // OPTIONAL: color by project or any property
+        const project = info.event.extendedProps.project;
+        let bgColor = '#666'; // default fallback
+        if (project === 'Manchester Marathon') bgColor = 'orange';
+        if (project === 'Billy Whitehouse') bgColor = '#3498db';
+        if (project === 'Three Peaks Challenge') bgColor = 'green';
+
+        // Set background and border color
+        info.el.style.backgroundColor = bgColor;
+        info.el.style.borderColor = bgColor;
+
+        // Optionally, show a tooltip on hover
+        info.el.title = info.event.title + "\nProject: " + project;
+      },
+      // User clicks an event block
+      eventClick: function(info) {
+        editEvent(info.event);
+      }
+    });
+
+    calendar.render();
+  });
+
+  // Open Add Event Modal
+  function openModal(editMode = false) {
+    document.getElementById('modalBg').style.display = 'flex';
+    document.getElementById('modalTitle').textContent = editMode ? 'Edit Event' : 'Add Event';
+
+    if (!editMode) {
+      // Clear fields for a new event
+      document.getElementById('eventId').value = "";
+      document.getElementById('eventTitle').value = "";
+      document.getElementById('eventProject').value = "";
+      document.getElementById('eventDesc').value = "";
+      document.getElementById('eventStart').value = "";
+      document.getElementById('eventEnd').value = "";
+    }
+  }
+
+  function closeModal() {
+    document.getElementById('modalBg').style.display = 'none';
+  }
+
+  // Save or update an event
+  function saveEvent() {
+    const id = document.getElementById('eventId').value || crypto.randomUUID();
+    const title = document.getElementById('eventTitle').value.trim();
+    const project = document.getElementById('eventProject').value;
+    const description = document.getElementById('eventDesc').value.trim();
+    const start = document.getElementById('eventStart').value;
+    const end = document.getElementById('eventEnd').value;
+
+    if (!title || !start || !end) {
+      alert("Please enter at least a title, start, and end time.");
+      return;
+    }
+
+    // Load existing events
+    let events = JSON.parse(localStorage.getItem("whiteLyonFullEvents") || "[]");
+    const index = events.findIndex(e => e.id === id);
+
+    const newEvent = { id, title, project, description, start, end };
+
+    if (index > -1) {
+      events[index] = newEvent;
+    } else {
+      events.push(newEvent);
+    }
+
+    localStorage.setItem("whiteLyonFullEvents", JSON.stringify(events));
+    closeModal();
+
+    // Update the calendar in real-time
+    const existingEvent = calendar.getEventById(id);
+    if (existingEvent) {
+      // Update existing event
+      existingEvent.setProp('title', title);
+      existingEvent.setStart(start);
+      existingEvent.setEnd(end);
+      existingEvent.setExtendedProp('project', project);
+      existingEvent.setExtendedProp('description', description);
+    } else {
+      // Add new event
+      calendar.addEvent({
+        id, title, start, end,
+        extendedProps: { project, description }
+      });
+    }
+  }
+
+  // Populate modal to edit an existing event
+  function editEvent(eventObj) {
+    openModal(true); // set edit mode
+    document.getElementById('eventId').value = eventObj.id;
+    document.getElementById('eventTitle').value = eventObj.title;
+    document.getElementById('eventProject').value = eventObj.extendedProps.project || "";
+    document.getElementById('eventDesc').value = eventObj.extendedProps.description || "";
+    document.getElementById('eventStart').value = eventObj.startStr;
+    document.getElementById('eventEnd').value = eventObj.endStr;
+  }
+</script>
+</body>
+</html>
