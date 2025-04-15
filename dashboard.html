@@ -1,351 +1,80 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard – WhiteLyon Productions</title>
+  <link rel="stylesheet" href="dashboard.css" />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0a0a0a;
-      --card: #111;
-      --accent: #e50914;
-      --text: #f0f0f0;
-      --subtext: #bbb;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-    }
-    header {
-      position: sticky;
-      top: 0;
-      background-color: #000;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 2rem;
-      z-index: 1000;
-      border-bottom: 1px solid #222;
-    }
-    .logo-title {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-    .logo-title img {
-      height: 40px;
-    }
-    nav {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-    }
-    nav ul {
-      list-style: none;
-      display: flex;
-      gap: 1.5rem;
-      padding: 0;
-      margin: 0;
-    }
-    nav ul li a {
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    nav ul li a:hover {
-      color: var(--accent);
-    }
-    .profile-menu {
-      position: relative;
-    }
-    .profile-icon {
-      cursor: pointer;
-      border: 2px solid white;
-      color: white;
-      background: transparent;
-      padding: 0.4rem 1rem;
-      border-radius: 20px;
-      font-weight: 600;
-    }
-    .dropdown {
-      display: none;
-      position: absolute;
-      right: 0;
-      top: 2.5rem;
-      background-color: #111;
-      border-radius: 8px;
-      padding: 1rem;
-      min-width: 160px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
-    }
-    .dropdown a {
-      display: block;
-      color: white;
-      text-decoration: none;
-      margin-bottom: 0.5rem;
-    }
-    .dropdown a:hover {
-      color: var(--accent);
-    }
-    .chat-icon {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 55px;
-      height: 55px;
-      font-size: 1.5rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 10px rgba(229, 9, 20, 0.5);
-    }
-    main {
-      padding: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .welcome {
-      font-size: 1.6rem;
-      margin-bottom: 2rem;
-      text-align: center;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-    }
-    /* Clickable card styles */
-    .card-link {
-      display: block;
-      text-decoration: none;
-      color: inherit;
-    }
-    .card {
-      background-color: var(--card);
-      padding: 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(255,255,255,0.03);
-      position: relative;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .card:hover {
-      transform: scale(1.02);
-      box-shadow: 0 0 15px rgba(255,255,255,0.1);
-    }
-    .click-indicator {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 1.5rem;
-      opacity: 0.6;
-      transition: opacity 0.2s ease;
-      pointer-events: none;
-    }
-    .card:hover .click-indicator {
-      opacity: 1;
-    }
-    .card h3 {
-      margin-top: 0;
-    }
-    .progress {
-      background: #222;
-      height: 8px;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 0.5rem;
-    }
-    .progress-bar {
-      height: 100%;
-      background: var(--accent);
-      width: 65%;
-    }
-    .card img {
-      width: 100%;
-      margin-top: 1rem;
-      border-radius: 6px;
-    }
-    textarea {
-      width: 100%;
-      padding: 0.5rem;
-      border-radius: 5px;
-      resize: vertical;
-    }
-    @media (max-width: 768px) {
-      nav ul {
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-      }
-    }
-  </style>
+  <script defer src="dashboard.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-<script>
-  const user = localStorage.getItem("loggedInUser");
-  if (!user) window.location.href = "index.html";
-</script>
-<header>
-  <div class="logo-title">
-    <img src="assets/logo.png" alt="Logo" />
-    <h1 style="font-size: 1.3rem;">WhiteLyon</h1>
-  </div>
-  <nav>
-    <ul>
-      <li><a href="dashboard.html">Home</a></li>
-      <li><a href="schedule.html">Schedule</a></li>
-      <li><a href="projects.html">Projects</a></li>
-      <li><a href="inspiration.html">Inspiration</a></li>
-      <li><a href="finance.html">Finance</a></li>
-    </ul>
-  </nav>
-  <div class="profile-menu">
-    <button class="profile-icon" onclick="toggleDropdown()">👤 <span id="profileEmail">User</span></button>
-    <div class="dropdown" id="dropdownMenu">
-      <a href="#">View Profile</a>
-      <a href="#">Settings</a>
-      <a href="#" onclick="logout()">Log Out</a>
+  <script>
+    const user = localStorage.getItem("loggedInUser");
+    if (!user) window.location.href = "index.html";
+  </script>
+  <header>
+    <div class="logo-title">
+      <img src="assets/logo.png" alt="Logo" />
+      <h1>WhiteLyon</h1>
     </div>
-  </div>
-</header>
-<main>
-  <div class="welcome">Welcome back, <span id="welcomeUser">Crew</span>!</div>
-  <div class="grid">
-    <!-- Interactive Cards (Widgets) -->
-    <a href="project-details.html" class="card-link">
+    <nav>
+      <ul>
+        <li><a href="dashboard.html">Home</a></li>
+        <li><a href="schedule.html">Schedule</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="inspiration.html">Inspiration</a></li>
+        <li><a href="finance.html">Finance</a></li>
+      </ul>
+    </nav>
+    <div class="profile-menu">
+      <button class="profile-icon" onclick="toggleDropdown()">👤 <span id="profileEmail">User</span></button>
+      <div class="dropdown" id="dropdownMenu">
+        <a href="#">View Profile</a>
+        <a href="#">Settings</a>
+        <a href="#" onclick="logout()">Log Out</a>
+      </div>
+    </div>
+  </header>
+  <main>
+    <div class="welcome">🎬 Welcome back, <span id="welcomeUser">Crew</span>!</div>
+    <div class="grid">
       <div class="card">
-        <div class="click-indicator">➜</div>
         <h3>🎬 Featured Project</h3>
         <p>A sci-fi short currently in post-production.</p>
         <div class="progress"><div class="progress-bar"></div></div>
         <img src="assets/project-echo.jpg" alt="Project Image" />
       </div>
-    </a>
-    <a href="todo.html" class="card-link">
       <div class="card">
-        <div class="click-indicator">➜</div>
         <h3>✅ To-Do List</h3>
-        <p>Manage your tasks and track progress.</p>
+        <ul id="todoList"></ul>
+        <input type="text" id="todoInput" placeholder="New task..." />
+        <button onclick="addTask()">Add Task</button>
       </div>
-    </a>
-    <a href="updates.html" class="card-link">
       <div class="card">
-        <div class="click-indicator">➜</div>
-        <h3>🔔 Latest Updates</h3>
-        <ul>
-          <li>🎧 New playlist added to Inspiration — April 8</li>
-          <li>🎬 Storyboard for Echo uploaded — April 9</li>
-          <li>📸 Camera test scheduled for Thursday 4PM — April 7</li>
-        </ul>
-      </div>
-    </a>
-    <a href="schedule.html" class="card-link">
-      <div class="card">
-        <div class="click-indicator">➜</div>
         <h3>📅 Upcoming Schedule</h3>
-        <ul id="upcomingEventsList">
-          <li>Loading upcoming events...</li>
-        </ul>
+        <ul id="upcomingEventsList"><li>Loading events...</li></ul>
       </div>
-    </a>
-    <a href="quick-notes.html" class="card-link">
       <div class="card">
-        <div class="click-indicator">➜</div>
         <h3>📝 Quick Notes</h3>
         <textarea id="quickNotes" placeholder="Write something..."></textarea>
       </div>
-    </a>
-    <a href="activity-log.html" class="card-link">
       <div class="card">
-        <div class="click-indicator">➜</div>
         <h3>📊 Activity Log</h3>
-        <ul id="activityLog">
-          <li>No recent activity yet.</li>
+        <ul id="activityLog"><li>No recent activity yet.</li></ul>
+      </div>
+      <div class="card">
+        <h3>🔔 Latest Updates</h3>
+        <ul>
+          <li>🎧 New playlist added to Inspiration — Apr 8</li>
+          <li>🎬 Storyboard for Echo uploaded — Apr 9</li>
+          <li>📸 Camera test scheduled — Apr 11</li>
         </ul>
       </div>
-    </a>
-  </div>
-</main>
-<button class="chat-icon" onclick="window.location.href='contacts.html'">💬</button>
-<script>
-  // Populate user info from localStorage
-  if (localStorage.getItem("loggedInUser")) {
-    document.getElementById("welcomeUser").textContent = localStorage.getItem("loggedInUser");
-    document.getElementById("profileEmail").textContent = localStorage.getItem("loggedInUser");
-  }
-  
-  function toggleDropdown() {
-    const menu = document.getElementById("dropdownMenu");
-    menu.style.display = menu.style.display === "block" ? "none" : "block";
-  }
-  
-  window.addEventListener("click", function(e) {
-    if (!e.target.closest(".profile-menu")) {
-      document.getElementById("dropdownMenu").style.display = "none";
-    }
-  });
-  
-  function logout() {
-    localStorage.removeItem("loggedInUser");
-    localStorage.removeItem("rememberedUser");
-    window.location.href = "index.html";
-  }
-  
-  // Quick Notes Auto-Save
-  const notesField = document.getElementById("quickNotes");
-  const savedNote = localStorage.getItem("whiteLyonNotes") || "";
-  notesField.value = savedNote;
-  notesField.addEventListener("input", () => {
-    localStorage.setItem("whiteLyonNotes", notesField.value);
-    logActivity("Updated quick notes");
-  });
-  
-  // Activity Log
-  const activityLog = document.getElementById("activityLog");
-  let activityData = JSON.parse(localStorage.getItem("whiteLyonActivity")) || [];
-  
-  function logActivity(action) {
-    const entry = `${new Date().toLocaleString()}: ${action}`;
-    activityData.unshift(entry);
-    if (activityData.length > 5) activityData.pop();
-    localStorage.setItem("whiteLyonActivity", JSON.stringify(activityData));
-    renderActivity();
-  }
-  
-  function renderActivity() {
-    if (activityData.length === 0) {
-      activityLog.innerHTML = "<li>No recent activity yet.</li>";
-      return;
-    }
-    activityLog.innerHTML = activityData.map(item => `<li>${item}</li>`).join("");
-  }
-  
-  renderActivity();
-  
-  // Load upcoming events for calendar preview
-  function loadUpcomingEvents() {
-    const list = document.getElementById("upcomingEventsList");
-    const events = JSON.parse(localStorage.getItem("whiteLyonFullEvents")) || [];
-    const now = new Date();
-    const upcoming = events.filter(e => new Date(e.start) >= now)
-      .sort((a, b) => new Date(a.start) - new Date(b.start))
-      .slice(0, 5);
-    list.innerHTML = upcoming.length ? upcoming.map(e => {
-      const date = new Date(e.start).toLocaleString();
-      return `<li><strong>${e.title}</strong> – <em>${e.project}</em><br><small>${date}</small></li>`;
-    }).join("") : "<li>No upcoming events.</li>";
-  }
-  
-  loadUpcomingEvents();
-</script>
+    </div>
+  </main>
+  <button class="chat-icon" onclick="window.location.href='contacts.html'">💬</button>
 </body>
 </html>
