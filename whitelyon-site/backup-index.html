@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome – WhiteLyon Productions</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100vh;
+      padding: 2rem;
+      box-sizing: border-box;
+    }
+
+    .left {
+      max-width: 600px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1.2rem;
+      color: #aaa;
+    }
+
+    .buttons {
+      margin-top: 2rem;
+    }
+
+    .buttons a {
+      background-color: red;
+      color: white;
+      padding: 0.8rem 1.5rem;
+      text-decoration: none;
+      margin-right: 1rem;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .logo {
+      height: 80%;
+      max-height: 400px;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+        text-align: center;
+        justify-content: center;
+      }
+
+      .buttons a {
+        display: block;
+        margin: 1rem auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="left">
+    <h1>Welcome to WhiteLyon Productions staff page.</h1>
+    <p>The production studio for the future.</p>
+    <div class="buttons">
+      <a href="dashboard.html">Log In</a>
+      <a href="dashboard.html">Create Account</a>
+    </div>
+  </div>
+
+  <img src="assets/logo.png" alt="WhiteLyon Logo" class="logo" />
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contacts – WhiteLyon Productions</title>
+  <link rel="icon" href="assets/favicon.png" />
+  <style>
+    body {
+      margin: 0;
+      background-color: #0b0b0b;
+      color: #f5f5f5;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      background-color: #111;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #333;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: #181818;
+      border-right: 1px solid #222;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .sidebar h3 {
+      font-size: 1rem;
+      margin-bottom: 0.8rem;
+      color: #aaa;
+    }
+
+    .contact {
+      padding: 0.6rem 0.8rem;
+      margin-bottom: 0.5rem;
+      border-radius: 6px;
+      background-color: #222;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .contact:hover,
+    .contact.active {
+      background-color: #333;
+    }
+
+    .contact span {
+      display: block;
+      font-weight: bold;
+    }
+
+    .contact small {
+      color: #aaa;
+      font-size: 0.8rem;
+    }
+
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+    }
+
+    .contact-header {
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-bottom: 1px solid #333;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 0.7rem 1rem;
+      border-radius: 10px;
+      font-size: 0.95rem;
+    }
+
+    .message.you {
+      background-color: red;
+      color: white;
+      align-self: flex-end;
+    }
+
+    .message.them {
+      background-color: #2b2b2b;
+      align-self: flex-start;
+    }
+
+    .chat-input {
+      display: flex;
+      gap: 0.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #333;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 0.7rem;
+      border-radius: 6px;
+      border: none;
+      background-color: #222;
+      color: white;
+    }
+
+    .chat-input button {
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .main {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #222;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .content {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const user = localStorage.getItem("loggedInUser");
+    if (!user) window.location.href = "index.html";
+  </script>
+
+  <header>
+    <h1>👥 Contacts – WhiteLyon Productions</h1>
+    <span>Logged in as <strong id="currentUserDisplay"></strong></span>
+  </header>
+
+  <div class="main">
+    <div class="sidebar" id="userList">
+      <h3>Team</h3>
+      <!-- Contacts will be injected here -->
+    </div>
+
+    <div class="content">
+      <div class="contact-header" id="chatHeader">Select a contact</div>
+      <div class="messages" id="chatMessages">
+        <!-- Chat messages go here -->
+      </div>
+      <div class="chat-input">
+        <input type="text" id="messageInput" placeholder="Type a message..." disabled />
+        <button onclick="sendMessage()" disabled>Send</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const currentUser = localStorage.getItem("loggedInUser");
+    document.getElementById("currentUserDisplay").textContent = currentUser;
+
+    const users = ["Matty Wilson", "Ben Lyons", "Ben White"];
+    const userList = document.getElementById("userList");
+    const chatHeader = document.getElementById("chatHeader");
+    const chatMessages = document.getElementById("chatMessages");
+    const messageInput = document.getElementById("messageInput");
+    const sendBtn = document.querySelector(".chat-input button");
+
+    let selectedUser = null;
+
+    // Populate contact list
+    users.forEach(name => {
+      if (name !== currentUser) {
+        const div = document.createElement("div");
+        div.classList.add("contact");
+        div.innerHTML = `<span>${name}</span><small>Online</small>`;
+        div.onclick = () => {
+          document.querySelectorAll(".contact").forEach(c => c.classList.remove("active"));
+          div.classList.add("active");
+          selectUser(name);
+        };
+        userList.appendChild(div);
+      }
+    });
+
+    function selectUser(name) {
+      selectedUser = name;
+      chatHeader.textContent = "Chatting with " + name;
+      messageInput.disabled = false;
+      sendBtn.disabled = false;
+      loadMessages();
+    }
+
+    function getChatKey() {
+      return `${currentUser}__${selectedUser}`;
+    }
+
+    function loadMessages() {
+      const key = getChatKey();
+      const messages = JSON.parse(localStorage.getItem(key)) || [];
+      chatMessages.innerHTML = "";
+      messages.forEach(msg => {
+        const div = document.createElement("div");
+        div.classList.add("message", msg.sender === currentUser ? "you" : "them");
+        div.textContent = msg.text;
+        chatMessages.appendChild(div);
+      });
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function sendMessage() {
+      const text = messageInput.value.trim();
+      if (!text || !selectedUser) return;
+
+      const key = getChatKey();
+      const reverseKey = `${selectedUser}__${currentUser}`;
+
+      const messages = JSON.parse(localStorage.getItem(key)) || [];
+      messages.push({ sender: currentUser, text });
+      localStorage.setItem(key, JSON.stringify(messages));
+
+      const reverseMessages = JSON.parse(localStorage.getItem(reverseKey)) || [];
+      reverseMessages.push({ sender: currentUser, text });
+      localStorage.setItem(reverseKey, JSON.stringify(reverseMessages));
+
+      messageInput.value = "";
+      loadMessages();
+    }
+
+    messageInput.addEventListener("keypress", e => {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
+</body>
+</html>

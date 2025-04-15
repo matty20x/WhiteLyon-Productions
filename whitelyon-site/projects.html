@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Projects – WhiteLyon Productions</title>
+  <link rel="icon" href="assets/favicon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --card: #111;
+      --accent: #e50914;
+      --text: #f0f0f0;
+      --subtext: #aaa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+    header {
+      background: #000;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #222;
+    }
+    .logo-title {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .logo-title img {
+      height: 40px;
+    }
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 1.2rem;
+      padding: 0;
+      margin: 0;
+    }
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav ul li a:hover {
+      color: var(--accent);
+    }
+    main {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      margin-bottom: 2rem;
+      font-size: 2rem;
+      text-align: center;
+    }
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      justify-content: space-between;
+    }
+    .filter-bar input, .filter-bar select {
+      background: #1c1c1c;
+      color: white;
+      border: 1px solid #333;
+      padding: 0.5rem;
+      border-radius: 5px;
+    }
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .project-card {
+      background-color: var(--card);
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.05);
+    }
+    .project-thumb {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      height: 180px;
+      object-fit: cover;
+    }
+    .project-card h3 {
+      margin: 0 0 0.5rem 0;
+    }
+    .project-card p {
+      margin: 0 0 1rem;
+      color: var(--subtext);
+    }
+    .status {
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    .progress-bar-wrapper {
+      background-color: #222;
+      height: 10px;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+    .progress-bar {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    .file-upload {
+      margin-top: 1rem;
+    }
+    .file-upload input {
+      width: 100%;
+      background: transparent;
+      color: white;
+      border: 1px solid #444;
+      padding: 0.4rem;
+      border-radius: 5px;
+    }
+    .file-link {
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    @media (max-width: 768px) {
+      nav ul {
+        flex-direction: column;
+        gap: 0.8rem;
+        margin-top: 1rem;
+      }
+      .filter-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+<script>
+  const user = localStorage.getItem("loggedInUser");
+  if (!user) window.location.href = "index.html";
+</script>
+
+<header>
+  <div class="logo-title">
+    <img src="assets/logo.png" alt="WhiteLyon Logo" />
+    <h2>WhiteLyon</h2>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="dashboard.html">Home</a></li>
+      <li><a href="schedule.html">Schedule</a></li>
+      <li><a href="projects.html">Projects</a></li>
+      <li><a href="contacts.html">Contacts</a></li>
+      <li><a href="inspiration.html">Inspiration</a></li>
+      <li><a href="finance.html">Finance</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <h1>🎬 Projects</h1>
+
+  <div class="filter-bar">
+    <input type="text" id="searchInput" placeholder="Search projects..." />
+    <select id="statusFilter">
+      <option value="">All Statuses</option>
+      <option value="Pre-Production">Pre-Production</option>
+      <option value="Filming">Filming</option>
+      <option value="Editing">Editing</option>
+      <option value="Completed">Completed</option>
+    </select>
+  </div>
+
+  <div class="project-grid" id="projectContainer"></div>
+</main>
+
+<script>
+  const sampleProjects = [
+    {
+      id: "proj1",
+      name: "Project Echo",
+      status: "Editing",
+      description: "Sci-fi short film exploring time distortion.",
+      progress: 65,
+      image: "assets/project-echo.jpg"
+    },
+    {
+      id: "proj2",
+      name: "The Climb",
+      status: "Pre-Production",
+      description: "Documentary on personal transformation through nature.",
+      progress: 15,
+      image: "assets/project1.jpg"
+    },
+    {
+      id: "proj3",
+      name: "Behind the Kit",
+      status: "Filming",
+      description: "Feature doc on underground musicians.",
+      progress: 45,
+      image: "assets/project2.jpg"
+    },
+    {
+      id: "proj4",
+      name: "Voices Unheard",
+      status: "Editing",
+      description: "Short film about unseen mental health stories.",
+      progress: 80,
+      image: "assets/project3.jpg"
+    },
+    {
+      id: "proj5",
+      name: "Momentum",
+      status: "Completed",
+      description: "Marathon training film following multiple runners.",
+      progress: 100,
+      image: "assets/project4.jpg"
+    }
+  ];
+
+  const container = document.getElementById("projectContainer");
+  const searchInput = document.getElementById("searchInput");
+  const statusFilter = document.getElementById("statusFilter");
+
+  let projectData = JSON.parse(localStorage.getItem("whiteLyonProjects")) || sampleProjects;
+
+  function renderProjects() {
+    const search = searchInput.value.toLowerCase();
+    const status = statusFilter.value;
+    container.innerHTML = "";
+
+    projectData.forEach(project => {
+      if (
+        (search && !project.name.toLowerCase().includes(search)) ||
+        (status && project.status !== status)
+      ) return;
+
+      const card = document.createElement("div");
+      card.className = "project-card";
+
+      card.innerHTML = `
+        <img class="project-thumb" src="${project.image}" alt="${project.name}" />
+        <h3>${project.name}</h3>
+        <p>${project.description}</p>
+        <div class="status">🎯 ${project.status}</div>
+        <div class="progress-bar-wrapper">
+          <div class="progress-bar" style="width: ${project.progress}%;"></div>
+        </div>
+        <div class="file-upload">
+          <input type="file" onchange="uploadFile(event, '${project.id}')" />
+          <div id="file-${project.id}">
+            ${project.file ? `<a class="file-link" href="${project.file}" download>📎 Download File</a>` : ''}
+          </div>
+        </div>
+      `;
+
+      container.appendChild(card);
+    });
+  }
+
+  function uploadFile(event, id) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const fileData = e.target.result;
+      const projectIndex = projectData.findIndex(p => p.id === id);
+      if (projectIndex !== -1) {
+        projectData[projectIndex].file = fileData;
+        localStorage.setItem("whiteLyonProjects", JSON.stringify(projectData));
+        renderProjects();
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  searchInput.addEventListener("input", renderProjects);
+  statusFilter.addEventListener("change", renderProjects);
+
+  renderProjects();
+</script>
+</body>
+</html>
